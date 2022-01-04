@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import TodoItem from "../todoItem";
 import _ from "lodash";
@@ -27,16 +27,33 @@ const TodoList = () => {
     setTodo("");
   };
 
+  const saveTodos = (e) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === e.dataßid ? { ...todo, todo: e.edit } : todo
+      )
+    );
+  };
+
   const changeCompleted = (e) => {
-    console.log("e", e);
     // return e ? true : false;
+    setTodos(
+      todos.map((todo) =>
+        todo.id === e.id ? { ...todo, completed: !e.completed } : todo
+      )
+    );
     return;
   };
 
   const deleteTask = (e) => {
-    setTodos((x) => (x = todos.filter((del) => del.id !== e)));
+    console.log("delel", e);
+    if (e.completed) {
+      setTodos((x) => (x = todos.filter((del) => del.id !== e.id)));
+    } else {
+      return;
+    }
   };
-  // console.log("todos", todos);
+  console.log("todos", todos);
   return (
     <Wrapper>
       <TodoCategoryHeader>
@@ -56,6 +73,7 @@ const TodoList = () => {
           setTodos={setTodos}
           deleteTask={deleteTask}
           changeCompleted={changeCompleted}
+          saveTodos={saveTodos}
         />
       ))}
     </Wrapper>

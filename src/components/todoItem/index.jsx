@@ -1,26 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-const TodoItem = ({ data, setTodos, deleteTask, setTodo, changeCompleted }) => {
-  console.log("data", data);
+const TodoItem = ({ data, deleteTask, changeCompleted, saveTodos }) => {
   const [edit, setEdit] = useState(data.todo);
+  // useEffect(() => {
+  //   console.log("data", data);
+  //   saveTodos({ data, edit });
+  // }, [edit]);
 
   return (
     <TodoListItem>
-      <Checkbox
-        className="far fa-circle"
-        onClick={(e) => changeCompleted(data)}
-      />
-      <input
-        value={edit}
-        type="text"
-        // style={{ textDecoration: "line-through" }}
-        onChange={(e) => setEdit(e.target.value)}
-      />
-      <SaveTodo className="fas fa-check" />
+      {data.completed ? (
+        <>
+          <Checkbox
+            className="far fa-check-circle"
+            onClick={() => changeCompleted(data)}
+          />
+          <input
+            value={edit}
+            type="text"
+            style={{ textDecoration: "line-through" }}
+            onChange={(e) => setEdit(e.target.value)}
+          />
+        </>
+      ) : (
+        <>
+          <Checkbox
+            className="far fa-circle"
+            onClick={() => changeCompleted(data)}
+          />
+
+          <input
+            value={edit}
+            type="text"
+            // style={{ textDecoration: "line-through" }}
+            onChange={(e) => setEdit(e.target.value)}
+          />
+        </>
+      )}
+      {data.todo !== edit && (
+        <SaveTodo
+          className="fas fa-check"
+          onClick={() => saveTodos({ data, edit })}
+        />
+      )}
+
       <DeleteTodo
         className="fas fa-trash-alt"
-        onClick={(e) => deleteTask(data.id)}
+        onClick={() => deleteTask(data)}
       />
     </TodoListItem>
   );
