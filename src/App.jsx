@@ -3,39 +3,43 @@ import "./App.css";
 import _ from "lodash";
 import Header from "./components/header";
 import styled from "styled-components";
-import TodoItem from "./components/todoItem";
 import TodoList from "./components/todoList";
+import Sidebar from "./components/sidebar";
 
 function App() {
-  const fakeTasks = ["Eat Dinner", "Go to gym", "Walk the dog"];
-  const [task, setTask] = useState("");
-  const [tasks, setTasks] = useState([]);
-
-  const checkTodoExists = (data) => {
-    return _.some(tasks, ["task", data]);
-  };
-
-  const createId = () => {
-    return Math.random() * 10;
-  };
-
-  const addTaskHandler = (e) => {
-    e.preventDefault();
-    if (!checkTodoExists(task)) {
-      setTasks((x) => (x = [...tasks, { id: createId(), task: task }]));
-    }
-  };
-
-  const deleteTask = (e) => {
-    setTasks((x) => (x = tasks.filter((del) => del.id !== e)));
-  };
+  const [sideBarToggle, setSideBarToggle] = useState(true);
+  const sidebarTodoList = [
+    {
+      name: "Personal",
+      color: "#fd76a1",
+      icon: "fas fa-user",
+    },
+    {
+      name: "Work",
+      color: "#70c4be",
+      icon: "fas fa-briefcase",
+    },
+    {
+      name: "Profut with React",
+      color: "#ab6ddf",
+      icon: "fas fa-file-code",
+    },
+  ];
 
   return (
     <Wrapper>
       <Header />
 
       <Main>
-        <MainContent style={{ width: "100vw" }}>
+        <Sidebar
+          sideBarToggle={sideBarToggle}
+          sidebarTodoList={sidebarTodoList}
+        />
+        <MainContent
+          style={{
+            width: `calc(100vw - (${sideBarToggle ? "300px" : "70px"}))`,
+          }}
+        >
           <TodoContent>
             <Title>Dashboard</Title>
             <Greeting>Good morning, Carlos</Greeting>
@@ -44,26 +48,6 @@ function App() {
           </TodoContent>
         </MainContent>
       </Main>
-
-      <h2 style={{ color: "white" }}>TODO LIST APP 🤙</h2>
-      <form>
-        <input
-          type="text"
-          style={{ outline: "none" }}
-          value={task}
-          onChange={(e) => setTask((ev) => (ev = e.target.value))}
-        />
-
-        <button onClick={(e) => addTaskHandler(e)}>Add task</button>
-      </form>
-
-      {tasks.map((task) => (
-        <>
-          <h2 key={task.id} onClick={(e) => deleteTask(task.id)}>
-            - {task.task}
-          </h2>
-        </>
-      ))}
     </Wrapper>
   );
 }
