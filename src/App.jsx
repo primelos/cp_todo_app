@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import "./App.css";
-import _ from "lodash";
 import Header from "./components/header";
 import styled from "styled-components";
 import TodoList from "./components/todoList";
 import Sidebar from "./components/sidebar";
+import CalendarShow from "./components/calendar";
 
 function App() {
-  const [sideBarToggle, setSideBarToggle] = useState(true);
+  const [sideBarToggle, setSideBarToggle] = useState(false);
+
   const sidebarTodoList = [
     {
       name: "Personal",
@@ -20,7 +21,7 @@ function App() {
       icon: "fas fa-briefcase",
     },
     {
-      name: "Profut with React",
+      name: "Profit with React",
       color: "#ab6ddf",
       icon: "fas fa-file-code",
     },
@@ -28,7 +29,10 @@ function App() {
 
   return (
     <Wrapper>
-      <Header />
+      <Header
+        sideBarToggle={sideBarToggle}
+        setSideBarToggle={setSideBarToggle}
+      />
 
       <Main>
         <Sidebar
@@ -43,8 +47,9 @@ function App() {
           <TodoContent>
             <Title>Dashboard</Title>
             <Greeting>Good morning, Carlos</Greeting>
-
-            <TodoList />
+            {sidebarTodoList.map((list) => (
+              <TodoList key={list.name} list={list} />
+            ))}
           </TodoContent>
         </MainContent>
       </Main>

@@ -1,43 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
-const TodoItem = ({ data, deleteTask, changeCompleted, saveTodos }) => {
+const TodoItem = ({ data, deleteTask, changeCompleted, saveTodos, color }) => {
   const [edit, setEdit] = useState(data.todo);
-  // useEffect(() => {
-  //   console.log("data", data);
-  //   saveTodos({ data, edit });
-  // }, [edit]);
-
+  // console.log("edit", edit);
   return (
     <TodoListItem>
-      {data.completed ? (
-        <>
-          <Checkbox
-            className="far fa-check-circle"
-            onClick={() => changeCompleted(data)}
-          />
-          <input
-            value={edit}
-            type="text"
-            style={{ textDecoration: "line-through" }}
-            onChange={(e) => setEdit(e.target.value)}
-          />
-        </>
-      ) : (
-        <>
-          <Checkbox
-            className="far fa-circle"
-            onClick={() => changeCompleted(data)}
-          />
+      <Checkbox
+        className={data.completed ? "far fa-check-circle" : "far fa-circle"}
+        style={{ color: color }}
+        onClick={() => changeCompleted(data)}
+      />
+      <input
+        value={edit}
+        type="text"
+        style={{ textDecoration: data.completed ? "line-through" : "" }}
+        onChange={(e) => setEdit(e.target.value)}
+      />
 
-          <input
-            value={edit}
-            type="text"
-            // style={{ textDecoration: "line-through" }}
-            onChange={(e) => setEdit(e.target.value)}
-          />
-        </>
-      )}
       {data.todo !== edit && (
         <SaveTodo
           className="fas fa-check"
@@ -60,8 +40,7 @@ const TodoListItem = styled.div`
   display: flex;
   align-items: center;
   padding: 15px 20px;
-
-  transistion: 0.3s;
+  transition: 0.3s;
 
   input {
     flex: 1;
@@ -77,6 +56,8 @@ const Checkbox = styled.i`
   font-size: 20px;
   margin-right: 10px;
   cursor: pointer;
+  /* border-radius: 50%; */
+  /* background: #18181f; */
 `;
 
 const DeleteTodo = styled.i`

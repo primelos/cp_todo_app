@@ -3,7 +3,7 @@ import styled from "styled-components";
 import TodoItem from "../todoItem";
 import _ from "lodash";
 
-const TodoList = () => {
+const TodoList = ({ list }) => {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
 
@@ -30,7 +30,7 @@ const TodoList = () => {
   const saveTodos = (e) => {
     setTodos(
       todos.map((todo) =>
-        todo.id === e.dataßid ? { ...todo, todo: e.edit } : todo
+        todo.id === e.data.id ? { ...todo, todo: e.edit } : todo
       )
     );
   };
@@ -49,18 +49,16 @@ const TodoList = () => {
     console.log("delel", e);
     if (e.completed) {
       setTodos((x) => (x = todos.filter((del) => del.id !== e.id)));
-    } else {
-      return;
     }
   };
   console.log("todos", todos);
   return (
     <Wrapper>
       <TodoCategoryHeader>
-        <CategoryIcon style={{ background: "#FD76A1" }}>
-          <i className="fas fa-user" />
+        <CategoryIcon style={{ backgroundColor: list.color }}>
+          <i className={list.icon} />
         </CategoryIcon>
-        <Title>Personal</Title>
+        <Title>{list.name}</Title>
         <TodoInput value={todo} onChange={(e) => setTodo(e.target.value)} />
         <AddTodo className="fas fa-plus" onClick={(e) => addTodoHandler(e)} />
       </TodoCategoryHeader>
@@ -74,6 +72,7 @@ const TodoList = () => {
           deleteTask={deleteTask}
           changeCompleted={changeCompleted}
           saveTodos={saveTodos}
+          color={list.color}
         />
       ))}
     </Wrapper>
@@ -83,7 +82,7 @@ const TodoList = () => {
 export default TodoList;
 
 const Wrapper = styled.div`
-  background: #20212d;
+  background-color: #20212d;
   margin-bottom: 30px;
   border-radius: 20px;
   overflow: hidden;
@@ -120,9 +119,9 @@ const TodoInput = styled.input`
   border: none;
   background: #20212d;
   border-radius: 4px;
+  color: white;
   padding: 4px 10px;
   margin-right: 4px;
-  color: white;
 `;
 
 const AddTodo = styled.i`

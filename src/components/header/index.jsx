@@ -1,11 +1,15 @@
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ sideBarToggle, setSideBarToggle }) => {
   return (
     <Wrapper>
       <HeaderItem>
-        <i className="fas fa-bars" />
+        <i
+          className="fas fa-bars"
+          onClick={() => setSideBarToggle(!sideBarToggle)}
+        />
       </HeaderItem>
       <HeaderItem>
         <i className="fas fa-border-all" />
@@ -14,6 +18,12 @@ const Header = () => {
       <HeaderItem>
         <i className="fas fa-images" />
         <span>Collections</span>
+      </HeaderItem>
+      <HeaderItem>
+        <i className="fa fa-calendar" />
+        <Link to="calendar">
+          <span>Calendar</span>
+        </Link>
       </HeaderItem>
       <PlaceHolder />
       <HeaderItem>
@@ -46,7 +56,10 @@ const HeaderItem = styled.div`
   color: #eee;
   padding: 10px 16px;
   border-radius: 4px;
-
+  a {
+    text-decoration: none;
+    color: #eee;
+  }
   span {
     margin-left: 10px;
     font-weight: 500;
