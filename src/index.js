@@ -11,9 +11,9 @@ ReactDOM.render(
     <Router>
       {/* <App /> */}
       <Routes>
-        <Route exact path="/" element={<App />}>
-          <Route path="calendar" element={<CalendarShow />} />
-        </Route>
+        <Route exact path="/" element={<App />} />
+
+        <Route exact path="/calendar" element={<CalendarShow />} />
       </Routes>
     </Router>
   </React.StrictMode>,
