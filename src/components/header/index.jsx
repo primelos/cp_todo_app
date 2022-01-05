@@ -13,15 +13,17 @@ const Header = ({ sideBarToggle, setSideBarToggle }) => {
       </HeaderItem>
       <HeaderItem>
         <i className="fas fa-border-all" />
-        <span>Dashboard</span>
+        <Link to="/">
+          <span>Dashboard</span>
+        </Link>
       </HeaderItem>
       <HeaderItem>
         <i className="fas fa-images" />
         <span>Collections</span>
       </HeaderItem>
       <HeaderItem>
-        <i className="fa fa-calendar" />
-        <Link to="calendar">
+        <Link to="/calendar">
+          <i className="fa fa-calendar" />
           <span>Calendar</span>
         </Link>
       </HeaderItem>
