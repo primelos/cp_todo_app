@@ -1,11 +1,36 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import TodoItem from "../todoItem";
 import _ from "lodash";
+import { API_KEY } from "../../util";
+require("dotenv").config();
 
 const TodoList = ({ list }) => {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
+
+  const baseUrl = `https://api.airtable.com/v0/appryVZqreB455nuS/${list.name}`;
+  const myKey = "Bearer " + process.env.REACT_APP_AT_KEY;
+  console.log("mykey", myKey);
+  const getTodos = async (myKey) => {
+    console.log("inside", API_KEY());
+    try {
+      const todoData = await fetch(baseUrl, {
+        method: "get",
+        headers: {
+          Authorization: `Bearer ${API_KEY()}`,
+        },
+      });
+      const todoJson = await todoData.json();
+      console.log(todoJson);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getTodos(myKey);
+  }, [todo]);
 
   const checkTodoExists = (data) => {
     return _.some(todos, ["todo", data]);
