@@ -7,6 +7,7 @@ import _ from "lodash";
 const TodoList = ({ list }) => {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
+  let name = "test";
 
   const baseUrl = `https://api.airtable.com/v0/appryVZqreB455nuS/${list.name}`;
 
@@ -76,9 +77,7 @@ const TodoList = ({ list }) => {
     // setTodo("");
   };
 
-  let name = "car";
   const updateTodos = async (e) => {
-    // console.log(e);
     try {
       await fetch(`${baseUrl}/${e.data.id}`, {
         method: "put",
@@ -174,7 +173,6 @@ const TodoList = ({ list }) => {
           data={data}
           color={list.color}
           name={name}
-          baseUrl={baseUrl}
           deleteTask={deleteTask}
           updateTodos={updateTodos}
           changeCompleted={changeCompleted}

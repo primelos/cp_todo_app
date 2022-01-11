@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const TodoItem = ({
@@ -8,15 +8,8 @@ const TodoItem = ({
   updateTodos,
   color,
   name,
-  baseUrl,
 }) => {
   const [edit, setEdit] = useState(data.fields.title);
-  console.log("data.todo", data);
-  // console.log("edit", edit);
-
-  console.log("???", data.fields.title, edit);
-
-  // useEffect(() => {}, [edit]);
 
   return (
     <TodoListItem>
