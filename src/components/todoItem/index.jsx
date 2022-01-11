@@ -1,27 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-const TodoItem = ({ data, deleteTask, changeCompleted, saveTodos, color }) => {
-  const [edit, setEdit] = useState(data.todo);
+const TodoItem = ({
+  data,
+  deleteTask,
+  changeCompleted,
+  updateTodos,
+  color,
+  name,
+  baseUrl,
+}) => {
+  const [edit, setEdit] = useState(data.fields.title);
+  console.log("data.todo", data);
   // console.log("edit", edit);
+
+  console.log("???", data.fields.title, edit);
+
+  // useEffect(() => {}, [edit]);
+
   return (
     <TodoListItem>
       <Checkbox
-        className={data.completed ? "far fa-check-circle" : "far fa-circle"}
+        className={
+          data.fields.completed ? "far fa-check-circle" : "far fa-circle"
+        }
         style={{ color: color }}
         onClick={() => changeCompleted(data)}
       />
       <input
         value={edit}
         type="text"
-        style={{ textDecoration: data.completed ? "line-through" : "" }}
+        style={{ textDecoration: data.fields.completed ? "line-through" : "" }}
         onChange={(e) => setEdit(e.target.value)}
       />
 
-      {data.todo !== edit && (
+      {data.fields.title !== edit && (
         <SaveTodo
           className="fas fa-check"
-          onClick={() => saveTodos({ data, edit })}
+          onClick={() => updateTodos({ data, edit })}
         />
       )}
 
