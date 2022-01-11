@@ -12,7 +12,7 @@ const TodoList = ({ list }) => {
   const baseUrl = `https://api.airtable.com/v0/appryVZqreB455nuS/${list.name}`;
 
   const myKey = process.env.REACT_APP_AT_KEY;
-  // console.log("mykey", myKey);
+  console.log("mykey", myKey);
 
   const getTodos = async () => {
     try {
@@ -20,6 +20,7 @@ const TodoList = ({ list }) => {
         method: "get",
         headers: {
           Authorization: `Bearer key3ru3hmaqxEnIqj`,
+          // Authorization: `Bearer ${myKey}`,
         },
       });
       const todoJson = await todoData.json();
@@ -105,7 +106,7 @@ const TodoList = ({ list }) => {
   };
 
   const changeCompleted = async (e) => {
-    console.log("E", e);
+    // console.log("E", e);
     // return e ? true : false;
 
     try {
@@ -136,7 +137,7 @@ const TodoList = ({ list }) => {
   };
 
   const deleteTask = async (e) => {
-    console.log("delel", e);
+    // console.log("delel", e);
     if (e.fields.completed) {
       try {
         await fetch(`${baseUrl}/${e.id}`, {
@@ -156,7 +157,7 @@ const TodoList = ({ list }) => {
     // }
   };
 
-  console.log("todos", todos);
+  // console.log("todos", todos);
   return (
     <Wrapper>
       <TodoCategoryHeader>
