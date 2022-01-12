@@ -12,15 +12,13 @@ const TodoList = ({ list }) => {
   const baseUrl = `https://api.airtable.com/v0/appryVZqreB455nuS/${list.name}`;
 
   const myKey = process.env.REACT_APP_AT_KEY;
-  console.log("mykey", myKey);
 
   const getTodos = async () => {
     try {
       const todoData = await fetch(baseUrl, {
         method: "get",
         headers: {
-          Authorization: `Bearer key3ru3hmaqxEnIqj`,
-          // Authorization: `Bearer ${myKey}`,
+          Authorization: `Bearer ${myKey}`,
         },
       });
       const todoJson = await todoData.json();
@@ -39,9 +37,9 @@ const TodoList = ({ list }) => {
     return _.some(todos, ["todo", data]);
   };
 
-  const createId = () => {
-    return Math.random() * 10;
-  };
+  // const createId = () => {
+  //   return Math.random() * 10;
+  // };
 
   const addTodoHandler = async (e) => {
     e.preventDefault();
@@ -51,7 +49,7 @@ const TodoList = ({ list }) => {
           await fetch(baseUrl, {
             method: "post",
             headers: {
-              Authorization: `Bearer key3ru3hmaqxEnIqj`,
+              Authorization: `Bearer ${myKey}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -83,7 +81,7 @@ const TodoList = ({ list }) => {
       await fetch(`${baseUrl}/${e.data.id}`, {
         method: "put",
         headers: {
-          Authorization: "Bearer key3ru3hmaqxEnIqj",
+          Authorization: `Bearer ${myKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -106,14 +104,11 @@ const TodoList = ({ list }) => {
   };
 
   const changeCompleted = async (e) => {
-    // console.log("E", e);
-    // return e ? true : false;
-
     try {
       await fetch(`${baseUrl}/${e.id}`, {
         method: "put",
         headers: {
-          Authorization: "Bearer key3ru3hmaqxEnIqj",
+          Authorization: `Bearer ${myKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -137,13 +132,12 @@ const TodoList = ({ list }) => {
   };
 
   const deleteTask = async (e) => {
-    // console.log("delel", e);
     if (e.fields.completed) {
       try {
         await fetch(`${baseUrl}/${e.id}`, {
           method: "delete",
           headers: {
-            Authorization: "Bearer key3ru3hmaqxEnIqj",
+            Authorization: `Bearer ${myKey}`,
           },
         });
         getTodos();
@@ -157,7 +151,6 @@ const TodoList = ({ list }) => {
     // }
   };
 
-  // console.log("todos", todos);
   return (
     <Wrapper>
       <TodoCategoryHeader>
@@ -173,7 +166,6 @@ const TodoList = ({ list }) => {
           key={data.id}
           data={data}
           color={list.color}
-          name={name}
           deleteTask={deleteTask}
           updateTodos={updateTodos}
           changeCompleted={changeCompleted}
