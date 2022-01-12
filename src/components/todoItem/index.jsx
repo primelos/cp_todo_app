@@ -7,7 +7,6 @@ const TodoItem = ({
   changeCompleted,
   updateTodos,
   color,
-  name,
 }) => {
   const [edit, setEdit] = useState(data.fields.title);
 
