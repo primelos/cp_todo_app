@@ -20,7 +20,6 @@ const TodoList = ({ list }) => {
         },
       });
       const todoJson = await todoData.json();
-      console.log("API", todoJson.records);
       setTodos(todoJson.records);
     } catch (err) {
       console.log(err);
