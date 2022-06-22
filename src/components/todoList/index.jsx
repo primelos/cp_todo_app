@@ -1,98 +1,125 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import TodoItem from "../todoItem";
 import _ from "lodash";
-import { db } from "../../firbase";
-import {
-  collection,
-  orderBy,
-  onSnapshot,
-  query,
-  addDoc,
-  serverTimestamp,
-  doc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
 
 const TodoList = ({ list }) => {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
 
-  // const docRef = doc(db, 'todoCategories', list.name, 'todos', .id )
+  const baseUrl = `https://api.airtable.com/v0/appryVZqreB455nuS/${list.name}`;
 
-  useEffect(() => {
-    const todoListQuery = query(
-      collection(db, "todoCategories", list.name, "todos"),
-      orderBy("createdAt", "desc")
-    );
-    const unsub = onSnapshot(todoListQuery, (querySnapshot) => {
-      const todoItems = [];
+  const myKey = process.env.REACT_APP_AT_KEY;
 
-      querySnapshot.forEach((doc) => {
-        todoItems.push({
-          ...doc.data(),
-          id: doc.id,
-        });
+  const getTodos = useCallback(async () => {
+    try {
+      const todoData = await fetch(baseUrl, {
+        method: "get",
+        headers: {
+          Authorization: `Bearer ${myKey}`,
+        },
       });
-      setTodos(todoItems);
-    });
-
-    return unsub;
-  }, [list.name]);
-
-  const getTodos = async () => {};
+      const todoJson = await todoData.json();
+      console.log("API", todoJson.records);
+      setTodos(todoJson.records);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [myKey, baseUrl]);
 
   useEffect(() => {
     getTodos();
-  }, [todo]);
+  }, [todo, getTodos]);
 
   const checkTodoExists = (data) => {
     return _.some(todos, ["todo", data]);
   };
 
-  // const createId = () => {
-  //   return Math.random() * 10;
-  // };
-
   const addTodoHandler = async (e) => {
+    e.preventDefault();
     if (todo.length > 0) {
       if (!checkTodoExists(todo.toLowerCase())) {
-        const collectionRef = collection(
-          db,
-          "todoCategories",
-          list.name,
-          "todos"
-        );
-        await addDoc(collectionRef, {
-          title: todo,
-          completed: false,
-          createdAt: serverTimestamp(),
-        });
-        setTodo("");
+        try {
+          await fetch(baseUrl, {
+            method: "post",
+            headers: {
+              Authorization: `Bearer ${myKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              records: [
+                {
+                  fields: {
+                    title: todo,
+                    completed: false,
+                  },
+                },
+              ],
+            }),
+          });
+          setTodo("");
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   };
 
   const updateTodos = async (e) => {
-    const docRef = doc(db, "todoCategories", list.name, "todos", e.data.id);
-    await updateDoc(docRef, {
-      title: e.edit,
-      completed: e.data.completed,
-      createdAt: serverTimestamp(),
-    });
+    try {
+      await fetch(`${baseUrl}/${e.data.id}`, {
+        method: "put",
+        headers: {
+          Authorization: `Bearer ${myKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fields: {
+            title: e.edit,
+            completed: e.data.fields.completed,
+          },
+        }),
+      });
+      getTodos();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const changeCompleted = async (e) => {
-    const docRef = doc(db, "todoCategories", list.name, "todos", e.id);
-    await updateDoc(docRef, {
-      completed: !e.completed,
-    });
+    try {
+      await fetch(`${baseUrl}/${e.id}`, {
+        method: "put",
+        headers: {
+          Authorization: `Bearer ${myKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fields: {
+            title: e.fields.title,
+            completed: !e.fields.completed,
+          },
+        }),
+      });
+      getTodos();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const deleteTask = async (e) => {
-    if (e.completed) {
-      await deleteDoc(doc(db, "todoCategories", list.name, "todos", e.id));
+    if (e.fields.completed) {
+      try {
+        await fetch(`${baseUrl}/${e.id}`, {
+          method: "delete",
+          headers: {
+            Authorization: `Bearer ${myKey}`,
+          },
+        });
+        getTodos();
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
