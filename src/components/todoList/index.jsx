@@ -1,35 +1,47 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import TodoItem from "../todoItem";
 import _ from "lodash";
-// require("dotenv").config();
+import { db } from "../../firbase";
+import {
+  collection,
+  orderBy,
+  onSnapshot,
+  query,
+  addDoc,
+  serverTimestamp,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 
 const TodoList = ({ list }) => {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
-  let name = "test";
 
-  const baseUrl = `https://api.airtable.com/v0/appryVZqreB455nuS/${list.name}`;
+  // const docRef = doc(db, 'todoCategories', list.name, 'todos', .id )
 
-  const myKey = process.env.REACT_APP_AT_KEY;
-  console.log("mykey", myKey);
+  useEffect(() => {
+    const todoListQuery = query(
+      collection(db, "todoCategories", list.name, "todos"),
+      orderBy("createdAt", "desc")
+    );
+    const unsub = onSnapshot(todoListQuery, (querySnapshot) => {
+      const todoItems = [];
 
-  const getTodos = async () => {
-    try {
-      const todoData = await fetch(baseUrl, {
-        method: "get",
-        headers: {
-          Authorization: `Bearer key3ru3hmaqxEnIqj`,
-          // Authorization: `Bearer ${myKey}`,
-        },
+      querySnapshot.forEach((doc) => {
+        todoItems.push({
+          ...doc.data(),
+          id: doc.id,
+        });
       });
-      const todoJson = await todoData.json();
-      console.log("API", todoJson.records);
-      setTodos(todoJson.records);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+      setTodos(todoItems);
+    });
+
+    return unsub;
+  }, [list.name]);
+
+  const getTodos = async () => {};
 
   useEffect(() => {
     getTodos();
@@ -39,125 +51,51 @@ const TodoList = ({ list }) => {
     return _.some(todos, ["todo", data]);
   };
 
-  const createId = () => {
-    return Math.random() * 10;
-  };
+  // const createId = () => {
+  //   return Math.random() * 10;
+  // };
 
   const addTodoHandler = async (e) => {
-    e.preventDefault();
     if (todo.length > 0) {
       if (!checkTodoExists(todo.toLowerCase())) {
-        try {
-          await fetch(baseUrl, {
-            method: "post",
-            headers: {
-              Authorization: `Bearer key3ru3hmaqxEnIqj`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              records: [
-                {
-                  fields: {
-                    title: todo,
-                    completed: false,
-                  },
-                },
-              ],
-            }),
-          });
-          setTodo("");
-        } catch (error) {
-          console.log(error);
-        }
-
-        // setTodos(
-        //   (x) => (x = [{ id: createId(), todo, completed: false }, ...todos])
-        // );
+        const collectionRef = collection(
+          db,
+          "todoCategories",
+          list.name,
+          "todos"
+        );
+        await addDoc(collectionRef, {
+          title: todo,
+          completed: false,
+          createdAt: serverTimestamp(),
+        });
+        setTodo("");
       }
     }
-    // setTodo("");
   };
 
   const updateTodos = async (e) => {
-    try {
-      await fetch(`${baseUrl}/${e.data.id}`, {
-        method: "put",
-        headers: {
-          Authorization: "Bearer key3ru3hmaqxEnIqj",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fields: {
-            title: e.edit,
-            completed: e.data.fields.completed,
-          },
-        }),
-      });
-      getTodos();
-    } catch (error) {
-      console.log(error);
-    }
-
-    // setTodos(
-    //   todos.map((todo) =>
-    //     todo.id === e.data.id ? { ...todo, todo: e.edit } : todo
-    //   )
-    // );
+    const docRef = doc(db, "todoCategories", list.name, "todos", e.data.id);
+    await updateDoc(docRef, {
+      title: e.edit,
+      completed: e.data.completed,
+      createdAt: serverTimestamp(),
+    });
   };
 
   const changeCompleted = async (e) => {
-    // console.log("E", e);
-    // return e ? true : false;
-
-    try {
-      await fetch(`${baseUrl}/${e.id}`, {
-        method: "put",
-        headers: {
-          Authorization: "Bearer key3ru3hmaqxEnIqj",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fields: {
-            title: e.fields.title,
-            completed: !e.fields.completed,
-          },
-        }),
-      });
-      getTodos();
-    } catch (error) {
-      console.log(error);
-    }
-
-    // setTodos(
-    //   todos.map((todo) =>
-    //     todo.id === e.id ? { ...todo, completed: !e.completed } : todo
-    //   )
-    // );
-    // return;
+    const docRef = doc(db, "todoCategories", list.name, "todos", e.id);
+    await updateDoc(docRef, {
+      completed: !e.completed,
+    });
   };
 
   const deleteTask = async (e) => {
-    // console.log("delel", e);
-    if (e.fields.completed) {
-      try {
-        await fetch(`${baseUrl}/${e.id}`, {
-          method: "delete",
-          headers: {
-            Authorization: "Bearer key3ru3hmaqxEnIqj",
-          },
-        });
-        getTodos();
-      } catch (error) {
-        console.log(error);
-      }
+    if (e.completed) {
+      await deleteDoc(doc(db, "todoCategories", list.name, "todos", e.id));
     }
-
-    // if (e.completed) {
-    //   setTodos((x) => (x = todos.filter((del) => del.id !== e.id)));
-    // }
   };
 
-  // console.log("todos", todos);
   return (
     <Wrapper>
       <TodoCategoryHeader>
@@ -173,7 +111,6 @@ const TodoList = ({ list }) => {
           key={data.id}
           data={data}
           color={list.color}
-          name={name}
           deleteTask={deleteTask}
           updateTodos={updateTodos}
           changeCompleted={changeCompleted}

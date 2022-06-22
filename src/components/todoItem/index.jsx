@@ -7,27 +7,24 @@ const TodoItem = ({
   changeCompleted,
   updateTodos,
   color,
-  name,
 }) => {
-  const [edit, setEdit] = useState(data.fields.title);
+  const [edit, setEdit] = useState(data.title);
 
   return (
     <TodoListItem>
       <Checkbox
-        className={
-          data.fields.completed ? "far fa-check-circle" : "far fa-circle"
-        }
+        className={data.completed ? "far fa-check-circle" : "far fa-circle"}
         style={{ color: color }}
         onClick={() => changeCompleted(data)}
       />
       <input
         value={edit}
         type="text"
-        style={{ textDecoration: data.fields.completed ? "line-through" : "" }}
+        style={{ textDecoration: data.completed ? "line-through" : "" }}
         onChange={(e) => setEdit(e.target.value)}
       />
 
-      {data.fields.title !== edit && (
+      {data.title !== edit && (
         <SaveTodo
           className="fas fa-check"
           onClick={() => updateTodos({ data, edit })}

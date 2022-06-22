@@ -31,7 +31,7 @@ const Header = ({ sideBarToggle, setSideBarToggle }) => {
       <HeaderItem>
         <Profile>
           <img
-            src="https://carlosfvenegas.com/static/media/gitPic.f61e95e1.jpg"
+            src="https://carlosfvenegas.com/images/gitPic.jpg"
             alt="user_image"
           />
         </Profile>

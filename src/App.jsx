@@ -4,7 +4,6 @@ import Header from "./components/header";
 import styled from "styled-components";
 import TodoList from "./components/todoList";
 import Sidebar from "./components/sidebar";
-import CalendarShow from "./components/calendar";
 
 function App() {
   const [sideBarToggle, setSideBarToggle] = useState(false);

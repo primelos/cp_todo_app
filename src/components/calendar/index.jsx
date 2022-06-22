@@ -7,7 +7,6 @@ import Sidebar from "../sidebar";
 
 const CalendarShow = (props) => {
   const [value, onChange] = useState(new Date());
-  console.log("props", props);
   const [sideBarToggle, setSideBarToggle] = useState(false);
 
   const sidebarTodoList = [
